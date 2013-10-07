@@ -12,6 +12,7 @@ class MoviesController < ApplicationController
 	@selected_ratings = params[:ratings] || session[:ratings] || {}
 	@movies = Movie.find_all_by_rating(@selected_ratings.keys)
 	session[:ratings] = @selected_ratings    
+
 	if @sort_by == 'title'
 		@movies = @movies.sort_by{|x| x.title}
 	elsif @sort_by == 'release_date'
@@ -19,9 +20,13 @@ class MoviesController < ApplicationController
 	else
       	@movies = Movie.all
     end
-    
-        
-  	
+
+	sort = params[:o] || session[:o]
+	if params[:o] != session[:o]
+      	session[:o] = sort
+      	redirect_to :o => sort, :ratings => @selected_ratings and return
+    end
+
     #redirect_to movies_path(:ratings => @selected_ratings) and return
 
   end
