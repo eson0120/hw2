@@ -7,7 +7,23 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+	@sort_by = params[:o]
+    @all_ratings = ['G','PG','PG-13','R']
+	@selected_ratings = params[:ratings] || session[:ratings] || {}
+	@movies = Movie.find_all_by_rating(@selected_ratings.keys)
+	session[:ratings] = @selected_ratings    
+	if @sort_by == 'title'
+		@movies = @movies.sort_by{|x| x.title}
+	elsif @sort_by == 'release_date'
+		@movies = @movies.sort_by{|x| x.release_date}
+	else
+      	@movies = Movie.all
+    end
+    
+        
+  	
+    #redirect_to movies_path(:ratings => @selected_ratings) and return
+
   end
 
   def new
